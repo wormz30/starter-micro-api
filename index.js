@@ -1,6 +1,7 @@
-const express = require('express');
+//const express = require('express');
 //const fetch = require('node-fetch');
 import fetch from 'node-fetch';
+import express from 'express';
 
 const app = express();
 const port = 3000;
