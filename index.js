@@ -33,7 +33,7 @@ async function chatGPT(prompt) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer YOUR_API_KEY'
+      'Authorization': 'Bearer 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'
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo',
