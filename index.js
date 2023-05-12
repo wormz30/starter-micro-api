@@ -7,17 +7,12 @@ const port = 3000;
 app.use(express.json());
 
 app.post('/webhook', async (req, res) => {
-  console.log('Just got a webhook request!');
   const prompts = req.body.prompts || [];
 
-  try {
-    const results = await Promise.all(prompts.map(prompt => chatGPT(prompt)));
-    const generatedTexts = results.map(result => data.choices[0].message.trim());
-    res.status(200).json({ generatedTexts });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+  const results = await Promise.all(prompts.map(prompt => chatGPT(prompt)));
+  const generatedTexts = results.map(result => result.choices[0].message);
+
+  res.status(200).json({ generatedTexts: generatedTexts });
 });
 
 async function chatGPT(prompt) {
@@ -42,7 +37,7 @@ async function chatGPT(prompt) {
   });
 
   const data = await response.json();
-  return data.choices[0].message;
+  return data;
 }
 
 app.listen(port, () => {
