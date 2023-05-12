@@ -1,39 +1,31 @@
-const http = require('http');
-const url = require('url');
+const express = require('express');
 const fetch = require('node-fetch');
 
-const server = http.createServer(async (req, res) => {
-  console.log(`Just got a request at ${req.url}!`);
+const app = express();
+const port = 3000;
 
-  const parsedUrl = url.parse(req.url, true);
-  const prompts = parsedUrl.query.prompts || [];
+app.use(express.json());
+
+app.post('/webhook', async (req, res) => {
+  console.log('Just got a webhook request!');
+  const prompts = req.body.prompts || [];
 
   try {
-    // Execute ChatGPT calls concurrently using Promise.all()
     const results = await Promise.all(prompts.map(prompt => chatGPT(prompt)));
-
-    // Process the results as needed
     const generatedTexts = results.map(result => result.choices[0].message.content.trim());
-
-    // Send the generated texts as a response
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.write(JSON.stringify(generatedTexts));
-    res.end();
+    res.status(200).json({ generatedTexts });
   } catch (error) {
     console.error(error);
-    res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.write('Internal server error');
-    res.end();
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Function to make ChatGPT API calls
 async function chatGPT(prompt) {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer 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'
+      'Authorization': `Bearer ${process.env.API_KEY}`
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo',
@@ -53,8 +45,6 @@ async function chatGPT(prompt) {
   return data.choices[0].message;
 }
 
-// Start the server
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
