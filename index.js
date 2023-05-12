@@ -1,16 +1,12 @@
 const http = require('http');
+const url = require('url');
 const fetch = require('node-fetch');
 
 const server = http.createServer(async (req, res) => {
   console.log(`Just got a request at ${req.url}!`);
 
-  // List of prompts to send to ChatGPT
-  const prompts = [
-    "Prompt 1",
-    "Prompt 2",
-    "Prompt 3"
-    // Add more prompts as needed
-  ];
+  const parsedUrl = url.parse(req.url, true);
+  const prompts = parsedUrl.query.prompts || [];
 
   try {
     // Execute ChatGPT calls concurrently using Promise.all()
@@ -37,7 +33,7 @@ async function chatGPT(prompt) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer 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'
+      'Authorization': 'Bearer YOUR_API_KEY'
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo',
