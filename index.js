@@ -13,8 +13,9 @@ app.post('/webhook', async (req, res) => {
   try {
     const results = await Promise.all(prompts.map(prompt => chatGPT(prompt)));
     const generatedTexts = results.map(result => data.choices[0].message.trim());
-     res.status(200).json({results});
-    //res.status(200).json({ generatedTexts });
+    res.status(200).json({prompts});
+    //res.status(200).json({results});
+    res.status(200).json({ generatedTexts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
