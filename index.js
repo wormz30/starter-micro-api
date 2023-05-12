@@ -12,7 +12,7 @@ app.post('/webhook', async (req, res) => {
 
   try {
     const results = await Promise.all(prompts.map(prompt => chatGPT(prompt)));
-    const generatedTexts = results.map(result => result.choices[0].message.content.trim());
+    const generatedTexts = results.map(result => data.choices[0].message.trim());
     res.status(200).json({ generatedTexts });
   } catch (error) {
     console.error(error);
